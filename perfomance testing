@@ -1,0 +1,47 @@
+import time
+import csv
+
+# Assuming your main functionality is in a module named 'your_module'
+from MRTD import encodeMRZ, decodeMRZ
+
+def measure_execution_times(input_file, max_records):
+    # Open a CSV file for writing the results
+    with open('execution_times.csv', 'w', newline='') as csvfile:
+        fieldnames = ['Number of Records', 'Execution Time without Tests', 'Execution Time with Tests']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+
+        # Load the input data
+        with open(input_file, 'r') as file:
+            input_data = file.readlines()
+
+        for num_records in range(100, max_records + 1, 1000):
+            # Extract the required number of records
+            records_to_process = input_data[:num_records]
+
+            # Measure execution time without tests
+            start_time = time.time()
+            for record in records_to_process:
+                # Your main functionality (e.g., encodeMRZ or decodeMRZ) without tests
+                pass
+            without_tests_time = time.time() - start_time
+
+            # Measure execution time with tests
+            start_time = time.time()
+            for record in records_to_process:
+                # Your main functionality (e.g., encodeMRZ or decodeMRZ) with tests
+                pass
+            with_tests_time = time.time() - start_time
+
+            # Write results to the CSV file
+            writer.writerow({
+                'Number of Records': num_records,
+                'Execution Time without Tests': without_tests_time,
+                'Execution Time with Tests': with_tests_time
+            })
+
+if __name__ == '__main__':
+    input_file = 'path/to/records_encoded.json'  # Replace with the actual path
+    max_records = 10000  # Adjust as needed
+
+    measure_execution_times(input_file, max_records)
