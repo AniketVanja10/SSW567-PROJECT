@@ -1,47 +1,52 @@
 import time
-import csv
+import unittest
+import json
+from unittest import mock
+import pandas as pd
+import MRTD
 
+class PerformanceTest(unittest.TestCase):
 
-from MRTD import encodeMRZ, decodeMRZ
+    with open('records_decoded.json', 'r') as file_decoded:
+        data_decoded = json.load(file_decoded)
+        decoded_lines = data_decoded["records_decoded"]
 
-def measure_execution_times(input_file, max_records):
-    # Open a CSV file for writing the results
-    with open('execution_times.csv', 'w', newline='') as csvfile:
-        fieldnames = ['Number of Records', 'Execution Time without Tests', 'Execution Time with Tests']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
+    with open('records_encoded.json', 'r') as file_encoded:
+        data_encoded = json.load(file_encoded)
+        encoded_lines = data_encoded["records_encoded"]
 
-        # Load the input data
-        with open(input_file, 'r') as file:
-            input_data = file.readlines()
+    def measure_performance(self, function, lines, filename):
+        array_performance = [["Number of lines", f"{function.__name__} without test"]]
+        start = time.perf_counter()
+        for i in range(1, 10001):
+            if i == 100 or i % 1000 == 0:
+                line = lines[i - 1]
+                MRTD.scanMRZ = mock.Mock(return_value=line)
+                function(line)
+                end = time.perf_counter()
+                array_performance.append([f"1~{i}", f"{end - start:0.8f}"])
 
-        for num_records in range(100, max_records + 1, 1000):
-            # Extract the required number of records
-            records_to_process = input_data[:num_records]
+        df_performance = pd.DataFrame(array_performance)
+        df_performance.to_csv(filename, index=False, sep=',', header=False)
 
-            # Measure execution time without tests
-            start_time = time.time()
-            for record in records_to_process:
-                # Your main functionality  without tests
-                pass
-            without_tests_time = time.time() - start_time
+    def test_encode(self):
+        self.measure_performance(self.encode_with_mock, self.decoded_lines, "encode.csv")
 
-            # Measure execution time with tests
-            start_time = time.time()
-            for record in records_to_process:
-                # Your main functionality  with tests
-                pass
-            with_tests_time = time.time() - start_time
+    def test_decode(self):
+        self.measure_performance(self.decode_with_mock, self.encoded_lines, "decode.csv")
 
-            # Write results to the CSV file
-            writer.writerow({
-                'Number of Records': num_records,
-                'Execution Time without Tests': without_tests_time,
-                'Execution Time with Tests': with_tests_time
-            })
+    def encode_with_mock(self, line):
+        MRTD.encodeMRZ("P", line["line1"].get("issuing_country"), line["line1"].get("last_name"),
+                       line["line1"].get("given_name"),
+                       line["line2"].get("passport_number"), line["line2"].get("passport_number"),
+                       line["line2"].get("birth_date"), line["line2"].get("sex"),
+                       line["line2"].get("expiration_date"), line["line2"].get("personal_number"))
+
+    def decode_with_mock(self, line):
+        encode_line = line
+        MRTD.scanMRZ = mock.Mock(return_value=encode_line)
+        scan_res = MRTD.scanMRZ()
+        MRTD.decodeMRZ(scan_res)
 
 if __name__ == '__main__':
-    input_file = 'path/to/records_encoded.json'  # Replace with the actual path
-    max_records = 10000  # Adjust as needed
-
-    measure_execution_times(input_file, max_records)
+    unittest.main()
