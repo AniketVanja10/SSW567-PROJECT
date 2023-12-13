@@ -1,7 +1,7 @@
 import time
 import csv
 
-# Assuming your main functionality is in a module named 'your_module'
+
 from MRTD import encodeMRZ, decodeMRZ
 
 def measure_execution_times(input_file, max_records):
@@ -22,14 +22,14 @@ def measure_execution_times(input_file, max_records):
             # Measure execution time without tests
             start_time = time.time()
             for record in records_to_process:
-                # Your main functionality (e.g., encodeMRZ or decodeMRZ) without tests
+                # Your main functionality  without tests
                 pass
             without_tests_time = time.time() - start_time
 
             # Measure execution time with tests
             start_time = time.time()
             for record in records_to_process:
-                # Your main functionality (e.g., encodeMRZ or decodeMRZ) with tests
+                # Your main functionality  with tests
                 pass
             with_tests_time = time.time() - start_time
 
