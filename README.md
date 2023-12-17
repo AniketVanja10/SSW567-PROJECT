@@ -4,11 +4,11 @@
 --- 
 ### Pytest result: 
 
-![Pytest Result Screenshot](pytest_result.jpg?raw=true "PyTest Output")
+![Pytest Result Screenshot](pytest_result.png?raw=true "PyTest Output")
 ---
 ### coverage test result:
 
-![Coverage Test Result Screenshot](coverage_test.jpg?raw=true "Coverage Test Output")
+![Coverage Test Result Screenshot](coverage_test.png?raw=true "Coverage Test Output")
 ---
 ### mutationtest result: 
 
