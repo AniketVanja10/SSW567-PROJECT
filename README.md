@@ -8,8 +8,8 @@
 ---
 ### coverage test result:
 
-![Coverage Test Result Screenshot](coverage_test.png?raw=true "Coverage Test Output")
+![Coverage Test Result Screenshot](coverage_results.png?raw=true "Coverage Test Output")
 ---
 ### mutationtest result: 
 
-[Mutation Test HTML](mutpy_result/index.html "Mutation Test Final Result")
+[Mutation Test HTML](mutpy_results/index.html "Mutation Test Final Result")
